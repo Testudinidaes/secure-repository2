@@ -1,0 +1,27 @@
+name: ci
+on:
+  push:
+  pull_request:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://npm.example-business.com"
+
+      - name: Configure auth for private registry
+        run: |
+          # Configure auth token for the private registry used for @example-business scoped packages
+          npm config set //npm.example-business.com/:_authToken "${{ secrets.NPM_TOKEN }}"
+          npm config set always-auth true
+
+      - name: Install
+        run: npm ci
+
+      - name: Run
+        run: npm start
